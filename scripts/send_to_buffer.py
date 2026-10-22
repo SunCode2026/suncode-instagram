@@ -45,7 +45,7 @@ def build_input(post, folder, channel):
     base = os.environ["IMAGE_BASE"] + folder.strip("/") + "/"
     return {"channelId": channel, "text": post["text"], "schedulingType": "automatic",
             "mode": "customScheduled", "dueAt": post["dueAt"], "saveToDraft": True,
-            "assets": {"images": [{"url": base + name} for name in post["images"]]}}
+            "assets": [{"image": {"url": base + name}} for name in post["images"]]}
 
 
 def main(paths):
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--selftest":
         os.environ["IMAGE_BASE"] = "https://raw.githubusercontent.com/o/r/sha/"
         i = build_input({"text": "t", "dueAt": "2026-10-27T11:30:00Z", "images": ["01.png", "02.png"]}, "posts/x", "c1")
-        assert i["assets"]["images"][1]["url"] == "https://raw.githubusercontent.com/o/r/sha/posts/x/02.png"
+        assert i["assets"][1]["image"]["url"] == "https://raw.githubusercontent.com/o/r/sha/posts/x/02.png"
         assert i["saveToDraft"] and i["mode"] == "customScheduled"
         print("selftest ok")
     else:
