@@ -1,7 +1,7 @@
 """Send each given posts/<slug>/post.json to Buffer as an Instagram draft.
 post.json: {"text": "...", "dueAt": "2026-10-27T11:30:00Z", "images": ["01.png", ...]}
 env: BUFFER_API_KEY (secret), IMAGE_BASE (raw URL prefix ending in /), optional BUFFER_CHANNEL_ID."""
-import json, os, sys, urllib.request
+import json, os, sys, urllib.error, urllib.request
 
 API = "https://api.buffer.com"
 KEY = os.environ["BUFFER_API_KEY"]
@@ -9,14 +9,23 @@ MUTATION = ("mutation CreatePost($input: CreatePostInput!) { createPost(input: $
             "... on PostActionSuccess { post { id status dueAt } } ... on MutationError { message } } }")
 
 
+def fail(msg):
+    # ::error:: shows up as a run annotation, readable without the raw log
+    print("::error::" + str(msg).replace("\n", " ")[:3000])
+    sys.exit(1)
+
+
 def gql(query, variables=None):
     req = urllib.request.Request(API, json.dumps({"query": query, "variables": variables or {}}).encode(),
                                  {"Content-Type": "application/json", "Authorization": f"Bearer {KEY}",
                                   "User-Agent": "suncode-instagram/1.0"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        out = json.load(r)
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            out = json.load(r)
+    except urllib.error.HTTPError as e:
+        fail(f"HTTP {e.code}: {e.read().decode(errors='replace')[:1500]}")
     if out.get("errors"):
-        raise SystemExit(f"Buffer API error: {out['errors']}")
+        fail(f"Buffer API error: {out['errors']}")
     return out["data"]
 
 
@@ -29,7 +38,7 @@ def instagram_channel():
         for ch in gql(q, {"o": org["id"]})["channels"]:
             if ch["service"] == "instagram":
                 return ch["id"]
-    raise SystemExit("No Instagram channel connected in Buffer")
+    fail("No Instagram channel connected in Buffer")
 
 
 def build_input(post, folder, channel):
@@ -47,12 +56,13 @@ def main(paths):
         res = gql(MUTATION, {"input": build_input(post, os.path.dirname(path), channel)})["createPost"]
         if "message" in res:
             failed += 1
-            print(f"FAIL {path}: {res['message']}")
+            print(f"::error::FAIL {path}: {res['message']}")
         else:
             print(f"OK   {path}: draft {res['post']['id']} for {res['post']['dueAt']}")
     if failed:
         # show the real input shape so a schema change is a one-line fix
-        print(json.dumps(gql('{ __type(name: "CreatePostInput") { inputFields { name type { name kind ofType { name } } } } }'), indent=1))
+        fields = gql('{ __type(name: "CreatePostInput") { inputFields { name type { name kind ofType { name } } } } }')
+        print("::error::CreatePostInput " + json.dumps(fields))
         sys.exit(1)
 
 
