@@ -34,7 +34,7 @@ def instagram_channel():
         return os.environ["BUFFER_CHANNEL_ID"]
     orgs = gql("{ account { organizations { id } } }")["account"]["organizations"]
     for org in orgs:
-        q = "query($o: String!) { channels(input: {organizationId: $o}) { id name service } }"
+        q = "query($o: OrganizationId!) { channels(input: {organizationId: $o}) { id name service } }"
         for ch in gql(q, {"o": org["id"]})["channels"]:
             if ch["service"] == "instagram":
                 return ch["id"]
