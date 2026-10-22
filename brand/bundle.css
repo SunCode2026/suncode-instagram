@@ -1,0 +1,74 @@
+/* SunCode Instagram — plantillas de diapositiva 1080×1350 (4:5).
+   Una diapositiva = un <section class="sc-slide ..."> a tamaño real; se exporta a PNG 1080×1350.
+   Variables: las genera tokens.json (--sun, --orange, --cream...). */
+@font-face { font-family: "Clash Display"; font-weight: 200; src: url("../fonts/ClashDisplay-Extralight.otf") format("opentype"); font-display: block; }
+@font-face { font-family: "Clash Display"; font-weight: 300; src: url("../fonts/ClashDisplay-Light.otf") format("opentype"); font-display: block; }
+@font-face { font-family: "Clash Display"; font-weight: 400; src: url("../fonts/ClashDisplay-Regular.otf") format("opentype"); font-display: block; }
+@font-face { font-family: "Clash Display"; font-weight: 500; src: url("../fonts/ClashDisplay-Medium.otf") format("opentype"); font-display: block; }
+@font-face { font-family: "Clash Display"; font-weight: 600; src: url("../fonts/ClashDisplay-Semibold.otf") format("opentype"); font-display: block; }
+@font-face { font-family: "Clash Display"; font-weight: 700; src: url("../fonts/ClashDisplay-Bold.otf") format("opentype"); font-display: block; }
+
+.sc-slide { position: relative; width: 1080px; height: 1350px; overflow: hidden; box-sizing: border-box;
+  font-family: "Clash Display", system-ui, sans-serif; font-weight: 500; -webkit-font-smoothing: antialiased; }
+.sc-slide * { box-sizing: border-box; }
+
+/* Fondos */
+.sc-grad  { background: linear-gradient(160deg, var(--sun) 0%, #F9A52E 38%, var(--orange) 70%, var(--orange-deep) 100%); color: var(--white); }
+.sc-cream { background: var(--cream); color: var(--ink); }
+.sc-cream::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px;
+  background: linear-gradient(90deg, var(--sun), var(--orange), var(--orange-deep)); }
+
+/* Círculos decorativos (solo sobre degradado) */
+.sc-circle { position: absolute; border-radius: 50%; pointer-events: none; }
+.sc-circle.fill { background: var(--glass); }
+.sc-circle.line { border: 1px solid var(--hairline-light); }
+
+/* Eyebrow: línea + mayúsculas espaciadas */
+.sc-eyebrow { position: absolute; top: 100px; left: 96px; display: flex; align-items: center; gap: 24px;
+  font-size: 25px; line-height: 30px; letter-spacing: .36em; text-transform: uppercase; }
+.sc-eyebrow::before { content: ""; width: 64px; height: 3px; background: currentColor; }
+.sc-grad .sc-eyebrow { color: var(--white); }
+.sc-cream .sc-eyebrow { color: var(--orange); }
+
+/* Bloque de texto principal */
+.sc-block { position: absolute; left: 96px; right: 96px; display: flex; flex-direction: column; align-items: flex-start; z-index: 1; }
+.sc-title { margin: 0; font-weight: 500; letter-spacing: -.03em; text-wrap: balance; }
+.sc-cover .sc-block { top: 350px; }
+.sc-cover .sc-title { font-size: 120px; line-height: 128px; }
+.sc-cta .sc-block { top: 277px; }
+.sc-cta .sc-title { font-size: 88px; line-height: 98px; }
+.sc-content .sc-block { top: 459px; right: 220px; }
+.sc-content .sc-title { font-size: 104px; line-height: 120px; letter-spacing: -.02em; color: var(--ink); }
+.sc-rule { width: 120px; height: 3px; margin-top: 56px; background: linear-gradient(90deg, var(--sun), var(--orange)); }
+.sc-body { margin: 56px 0 0; max-width: 760px; font-size: 39px; line-height: 62px; letter-spacing: -.01em; color: var(--ink-body); }
+
+/* Botones */
+.sc-btn { display: inline-flex; align-items: center; gap: 28px; border-radius: var(--pill); white-space: nowrap; }
+.sc-btn::after { content: "\2192"; font-family: system-ui, sans-serif; font-weight: 300; }
+.sc-btn.ghost { margin-top: 80px; height: 81px; padding: 0 38px; border: 1px solid var(--hairline-light); color: var(--white); font-size: 30px; letter-spacing: .02em; }
+.sc-btn.solid { margin-top: 80px; height: 112px; padding: 0 56px; background: var(--white); color: var(--orange-deep); font-size: 35px; letter-spacing: -.01em; }
+
+/* Número gigante de fondo */
+.sc-watermark { position: absolute; top: 760px; right: -120px; font-size: 500px; line-height: 400px; letter-spacing: -.04em;
+  color: var(--watermark); z-index: 0; pointer-events: none; }
+
+/* Pie: logo + número de página */
+.sc-foot { position: absolute; left: 96px; right: 96px; bottom: 100px; display: flex; justify-content: space-between; align-items: flex-end; z-index: 1; }
+.sc-page { font-size: 24px; line-height: 28px; letter-spacing: .04em; }
+.sc-grad .sc-page { color: var(--white); }
+.sc-cream .sc-page { color: var(--ink-faint); }
+
+/* Logo: <img class="sc-logo" src="logo-blanco.png"> sobre degradado, src="logo-color.png" sobre crema. */
+.sc-logo { display: block; height: auto; }
+.sc-cover .sc-logo { width: 300px; }
+.sc-content .sc-logo { width: 216px; }
+
+/* Cierre: logo centrado grande + web */
+.sc-cta .sc-sign { position: absolute; left: 0; right: 0; bottom: 100px; display: flex; flex-direction: column; align-items: center; gap: 56px; z-index: 1; }
+.sc-cta .sc-sign .sc-logo { width: 520px; }
+.sc-url { font-size: 26px; letter-spacing: .3em; color: var(--white); opacity: .9; }
+
+/* Vista previa reducida (solo para las tarjetas del sistema) */
+.sc-thumb { width: 270px; height: 337.5px; overflow: hidden; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.sc-thumb > .sc-slide { transform: scale(.25); transform-origin: 0 0; }
+.sc-row { display: flex; gap: 16px; padding: 8px; }
