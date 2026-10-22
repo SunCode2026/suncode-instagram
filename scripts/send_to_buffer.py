@@ -4,7 +4,7 @@ env: BUFFER_API_KEY (secret), IMAGE_BASE (raw URL prefix ending in /), optional 
 import json, os, sys, urllib.error, urllib.request
 
 API = "https://api.buffer.com"
-KEY = os.environ["BUFFER_API_KEY"]
+KEY = os.environ.get("BUFFER_API_KEY", "").strip()
 MUTATION = ("mutation CreatePost($input: CreatePostInput!) { createPost(input: $input) { "
             "... on PostActionSuccess { post { id status dueAt } } ... on MutationError { message } } }")
 
@@ -74,4 +74,11 @@ if __name__ == "__main__":
         assert i["saveToDraft"] and i["mode"] == "customScheduled"
         print("selftest ok")
     else:
-        main(sys.argv[1:])
+        if not KEY:
+            fail("BUFFER_API_KEY está vacío: revisa el secreto del repositorio")
+        try:
+            main(sys.argv[1:])
+        except SystemExit:
+            raise
+        except Exception as e:
+            fail(f"{type(e).__name__}: {e}")
