@@ -45,6 +45,7 @@ def build_input(post, folder, channel):
     base = os.environ["IMAGE_BASE"] + folder.strip("/") + "/"
     return {"channelId": channel, "text": post["text"], "schedulingType": "automatic",
             "mode": "customScheduled", "dueAt": post["dueAt"], "saveToDraft": True,
+            "metadata": {"instagram": {"type": "post"}},
             "assets": [{"image": {"url": base + name}} for name in post["images"]]}
 
 
